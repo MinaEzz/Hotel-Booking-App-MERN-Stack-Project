@@ -37,10 +37,9 @@ app.use(
     }
     res.status(error.statusCode || 500).json({
       status: error.status || STATUSTEXT.ERROR,
-      data: null,
+      data: error.errors || null,
       message: error.message || "Unkown Error Occured.",
       code: error.statusCode || 500,
-      errors: error.errors || null,
     });
   }
 );
