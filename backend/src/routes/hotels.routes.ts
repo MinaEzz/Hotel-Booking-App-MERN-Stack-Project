@@ -12,16 +12,14 @@ import { updateHotelSchema } from "../utils/validations/hotel/updateHotel.valida
 const router = express.Router();
 
 // CREATE
-router.post("/", validate(createHotelSchema), createHotel);
+router.route("/").post(validate(createHotelSchema), createHotel);
 
-// READ
-router.get("/", getHotels);
-router.get("/:hotelId", getHotelById);
-
-// UPDATE
-router.put("/:hotelId", validate(updateHotelSchema), updateHotel);
-
-// DELETE
-router.delete("/:hotelId", deleteHotel);
+// READ / UPDATE / DELETE
+router.route("/").get(getHotels);
+router
+  .route("/:hotelId")
+  .get(getHotelById)
+  .put(validate(updateHotelSchema), updateHotel)
+  .delete(deleteHotel);
 
 export default router;
