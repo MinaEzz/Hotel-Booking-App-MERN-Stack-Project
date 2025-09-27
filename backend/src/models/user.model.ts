@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    otp: {
+      codeHash: { type: String, default: null },
+      expiresAt: { type: Date, default: null },
+      attempts: { type: Number, default: 0 },
+    },
   },
   { timestamps: true }
 );
@@ -37,11 +42,36 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Compare password
+// Compare password method
 userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ) {
   return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// setOtp method
+userSchema.methods.setOtp = async function (plainOtp: number, ttlMinutes = 5) {
+  const hash = await bcrypt.hash(String(plainOtp), 8);
+  this.otp = {
+    codeHash: hash,
+    expiresAt: new Date(Date.now() + ttlMinutes * 60 * 1000),
+    attempts: 0,
+  };
+  await this.save();
+};
+
+// verifyOtp method
+userSchema.methods.verifyOtp = async function (plainOtp: string) {
+  if (!this.otp || !this.otp.codeHash || !this.otp.expiresAt) return false;
+  if (this.otp.expiresAt < new Date()) return false;
+  const match = await bcrypt.compare(plainOtp, this.otp.codeHash);
+  return match;
+};
+
+// incrementOtpAttempts method
+userSchema.methods.incrementOtpAttempts = async function (by = 1) {
+  this.otp.attempts += by;
+  await this.save();
 };
 
 export default mongoose.model("User", userSchema);
