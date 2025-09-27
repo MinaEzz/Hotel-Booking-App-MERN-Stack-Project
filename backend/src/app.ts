@@ -11,6 +11,7 @@ import usersRouter from "./routes/users.routes";
 import hotelsRouter from "./routes/hotels.routes";
 import roomsRouter from "./routes/rooms.routes";
 import IAppError from "./types/appError.types";
+import createError from "./utils/createError";
 
 const app = express();
 app.use(express.json());
@@ -23,11 +24,10 @@ app.use("/api/users", usersRouter);
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/rooms", roomsRouter);
 // GLOBAL MIDDLEWARE FOR NOT FOUND ROUTERS
-app.all(/.*/, (req: Request, res: Response, next: NextFunction) => {
-  const error: any = new Error("This Resource Is Not Available");
-  error.status = STATUSTEXT.ERROR;
-  error.code = 404;
-  return next(error);
+app.all(/.*/, (_req: Request, _res: Response, next: NextFunction) => {
+  return next(
+    createError("This Resource Is Not Available", 404, STATUSTEXT.ERROR)
+  );
 });
 // DEFAULT ERROR HANDLER
 app.use(
@@ -37,10 +37,9 @@ app.use(
     }
     res.status(error.statusCode || 500).json({
       status: error.status || STATUSTEXT.ERROR,
-      data: null,
+      data: error.errors || null,
       message: error.message || "Unkown Error Occured.",
       code: error.statusCode || 500,
-      errors: error.errors || null,
     });
   }
 );

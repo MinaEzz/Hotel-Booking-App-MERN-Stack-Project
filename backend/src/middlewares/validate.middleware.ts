@@ -1,17 +1,16 @@
-import { ZodError, ZodObject } from "zod";
+import { z, ZodError } from "zod";
 import { Request, Response, NextFunction } from "express";
 import createError from "../utils/createError";
 import HttpStatusText from "../constants/httpStatusText";
 
-const validate =
-  (schema: ZodObject<any>) =>
-  (req: Request, _res: Response, next: NextFunction) => {
+export function validate(schema: z.ZodObject<any, any>) {
+  return (req: Request, _res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);
       next();
-    } catch (err) {
-      if (err instanceof ZodError) {
-        const formattedErrors = err.issues.map((issue) => ({
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const formattedErrors = error.issues.map((issue) => ({
           field: issue.path.join("."),
           message: issue.message,
         }));
@@ -27,5 +26,4 @@ const validate =
       return next(createError("Validation failed", 400));
     }
   };
-
-export default validate;
+}
