@@ -44,19 +44,18 @@ export const updateHotel = async (
   console.log("UPDATE HOTEL BODY: ", body);
 
   try {
-    const updatedHotel = await Hotel.findByIdAndUpdate(
+    const hotel = await Hotel.findByIdAndUpdate(
       hotelId,
       { $set: body },
       { new: true, runValidators: true }
     );
-
-    if (!updatedHotel) {
+    if (!hotel) {
       return next(createError("Hotel Not Found", 404, STATUSTEXT.FAIL));
     }
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: {
-        hotel: updatedHotel,
+        hotel,
       },
       message: "Hotel Updated Successfully",
     });
@@ -99,7 +98,7 @@ export const deleteHotel = async (
 
 // READ ALL
 export const getHotels = async (
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -139,11 +138,9 @@ export const getHotelById = async (
 
   try {
     const hotel = await Hotel.findById(hotelId);
-
     if (!hotel) {
       return next(createError("Hotel Not Found", 404, STATUSTEXT.FAIL));
     }
-
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: { hotel },
