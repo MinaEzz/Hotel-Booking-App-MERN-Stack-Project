@@ -4,6 +4,9 @@ import { Request, Response, NextFunction } from "express";
 import IUser from "../types/user.types";
 import createError from "../utils/createError";
 import generateOTP from "../utils/generateOtp";
+import generateTokenAndSetCookies from "../utils/validations/generateToken";
+import jwt from "jsonwebtoken";
+import AuthRequest from "../types/authRequest.types";
 
 export const register = async (
   req: Request<{}, {}, IUser>,
@@ -69,7 +72,7 @@ export const loginSendOtp = async (
     console.log("OTP: ", otp);
     await user.setOtp(otp, Number(process.env.OTP_EXPIRE_MINUTES || 5));
     // await sendOtpEmail(user.email, otp);
-    const { password: _pw, otp: _otp, ...userData } = user.toObject();
+    const { password: _pw, otp: _o, ...userData } = user.toObject();
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: userData,
@@ -122,6 +125,7 @@ export const verifyOtpAndLogin = async (
     user.otp = { codeHash: null, expiresAt: null, attempts: 0 };
     await user.save();
     const { password: _pw, otp: _o, ...userData } = user.toObject();
+    generateTokenAndSetCookies(user._id as string, user.isAdmin, res);
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: { user: userData },
@@ -129,6 +133,54 @@ export const verifyOtpAndLogin = async (
     });
   } catch (error: unknown) {
     console.log("VERIFY OTP ERROR: ", error);
+    if (error instanceof Error) {
+      return next(createError(error.message, 500));
+    }
+    return next(createError("Unexpected error", 500));
+  }
+};
+
+export const logout = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: process.env.NODE_ENV !== "development",
+      path: "/",
+    });
+    res.status(200).json({
+      status: STATUSTEXT.SUCCESS,
+      data: null,
+      message: "Logout successful.",
+    });
+  } catch (error: unknown) {
+    console.log("LOGOUT ERROR: ", error);
+    if (error instanceof Error) {
+      return next(createError(error.message, 500));
+    }
+    return next(createError("Unexpected error", 500));
+  }
+};
+
+export const getLoggedinUser = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user!;
+    const { password: _pw, otp: _o, ...userData } = user.toObject();
+    res.status(200).json({
+      status: STATUSTEXT.SUCCESS,
+      data: { user: userData },
+      message: "Logged-in user fetched successfully.",
+    });
+  } catch (error: unknown) {
+    console.log("GET LOGGEDIN USER ERROR: ", error);
     if (error instanceof Error) {
       return next(createError(error.message, 500));
     }

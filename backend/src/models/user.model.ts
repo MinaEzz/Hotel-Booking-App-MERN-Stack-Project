@@ -65,6 +65,10 @@ userSchema.methods.verifyOtp = async function (plainOtp: string) {
   if (!this.otp || !this.otp.codeHash || !this.otp.expiresAt) return false;
   if (this.otp.expiresAt < new Date()) return false;
   const match = await bcrypt.compare(plainOtp, this.otp.codeHash);
+  if (match) {
+    this.otp = { codeHash: null, expiresAt: null, attempts: 0 };
+    await this.save();
+  }
   return match;
 };
 

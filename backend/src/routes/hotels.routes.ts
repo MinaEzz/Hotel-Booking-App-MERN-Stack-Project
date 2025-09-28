@@ -9,17 +9,31 @@ import {
 import { validate } from "../middlewares/validate.middleware";
 import { createHotelSchema } from "../utils/validations/hotel/createHotel.validation";
 import { updateHotelSchema } from "../utils/validations/hotel/updateHotel.validation";
+import { authMiddleware } from "../middlewares/auth.middleware";
+import { adminMiddleware } from "../middlewares/admin.middleware";
 const router = express.Router();
 
 // CREATE
-router.route("/").post(validate(createHotelSchema), createHotel);
+router
+  .route("/")
+  .post(
+    authMiddleware,
+    adminMiddleware,
+    validate(createHotelSchema),
+    createHotel
+  );
 
 // READ / UPDATE / DELETE
 router.route("/").get(getHotels);
 router
   .route("/:hotelId")
   .get(getHotelById)
-  .put(validate(updateHotelSchema), updateHotel)
-  .delete(deleteHotel);
+  .put(
+    authMiddleware,
+    adminMiddleware,
+    validate(updateHotelSchema),
+    updateHotel
+  )
+  .delete(adminMiddleware, adminMiddleware, deleteHotel);
 
 export default router;
