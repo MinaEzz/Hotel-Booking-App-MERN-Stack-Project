@@ -8,7 +8,7 @@ const hotelSchema = new mongoose.Schema<IHotel>(
       required: true,
       trim: true,
     },
-    description: {
+    desc: {
       type: String,
       required: true,
     },
@@ -37,9 +37,7 @@ const hotelSchema = new mongoose.Schema<IHotel>(
       max: 5,
       default: 0,
     },
-    rooms: {
-      type: [String],
-    },
+    rooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Room" }],
     cheapestPrice: {
       type: Number,
       required: true,
@@ -53,5 +51,3 @@ const hotelSchema = new mongoose.Schema<IHotel>(
 );
 
 export default mongoose.model<IHotel>("Hotel", hotelSchema);
-
-// { type: mongoose.Schema.Types.ObjectId, ref: "Room" }
