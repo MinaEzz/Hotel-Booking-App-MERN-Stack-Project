@@ -1,5 +1,4 @@
 {
-  "extends": "@tsconfig/node22/tsconfig.json",
   "include": ["src/**/*"],
   "exclude": ["src/tests/**/*", "node_modules", "dist"],
   // Visit https://aka.ms/tsconfig to read more about this file

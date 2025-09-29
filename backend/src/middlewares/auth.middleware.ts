@@ -3,10 +3,10 @@ import STATUSTEXT from "../constants/httpStatusText";
 import { Response, NextFunction } from "express";
 import createError from "../utils/createError";
 import jwt from "jsonwebtoken";
-import AuthRequest from "../types/authRequest.types";
+import IAuthRequest from "../types/authRequest.types";
 
 export async function authMiddleware(
-  req: AuthRequest,
+  req: IAuthRequest,
   _res: Response,
   next: NextFunction
 ) {

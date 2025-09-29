@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 interface IUserMethods {
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -8,6 +8,7 @@ interface IUserMethods {
 }
 
 export default interface IUser extends Document, IUserMethods {
+  _id: Types.ObjectId;
   username: string;
   email: string;
   password: string;
