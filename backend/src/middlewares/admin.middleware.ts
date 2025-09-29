@@ -1,10 +1,10 @@
 import { Response, NextFunction } from "express";
 import createError from "../utils/createError";
 import STATUSTEXT from "../constants/httpStatusText";
-import AuthRequest from "../types/authRequest.types";
+import IAuthRequest from "../types/authRequest.types";
 
 export function adminMiddleware(
-  req: AuthRequest,
+  req: IAuthRequest,
   _res: Response,
   next: NextFunction
 ) {

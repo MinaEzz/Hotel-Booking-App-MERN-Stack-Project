@@ -31,10 +31,6 @@ export const registerSchema = z
       .string()
       .min(6, "Password must be at least 6 characters")
       .max(50, "Password must be less than 50 characters"),
-    // .regex(
-    //   passwordRegex,
-    //   "Password must contain uppercase, lowercase, number and special character"
-    // ),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

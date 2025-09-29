@@ -5,8 +5,7 @@ import IUser from "../types/user.types";
 import createError from "../utils/createError";
 import generateOTP from "../utils/generateOtp";
 import generateTokenAndSetCookies from "../utils/validations/generateToken";
-import jwt from "jsonwebtoken";
-import AuthRequest from "../types/authRequest.types";
+import IAuthRequest from "../types/authRequest.types";
 
 export const register = async (
   req: Request<{}, {}, IUser>,
@@ -125,7 +124,7 @@ export const verifyOtpAndLogin = async (
     user.otp = { codeHash: null, expiresAt: null, attempts: 0 };
     await user.save();
     const { password: _pw, otp: _o, ...userData } = user.toObject();
-    generateTokenAndSetCookies(user._id as string, user.isAdmin, res);
+    generateTokenAndSetCookies(user._id.toString(), user.isAdmin, res);
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: { user: userData },
@@ -167,7 +166,7 @@ export const logout = async (
 };
 
 export const getLoggedinUser = async (
-  req: AuthRequest,
+  req: IAuthRequest,
   res: Response,
   next: NextFunction
 ) => {
