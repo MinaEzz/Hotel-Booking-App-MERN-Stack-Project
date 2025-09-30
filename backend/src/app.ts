@@ -4,6 +4,7 @@ dotenv.config();
 const port: number = Number(process.env.PORT) || 8080;
 import connectMongoDB from "./config/connectMongoDB";
 import STATUSTEXT from "./constants/httpStatusText";
+import IAppError from "./types/appError.types";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 // ROUTES
@@ -11,7 +12,6 @@ import authRouter from "./routes/auth.routes";
 import usersRouter from "./routes/users.routes";
 import hotelsRouter from "./routes/hotels.routes";
 import roomsRouter from "./routes/rooms.routes";
-import IAppError from "./types/appError.types";
 import createError from "./utils/createError";
 
 const app = express();
