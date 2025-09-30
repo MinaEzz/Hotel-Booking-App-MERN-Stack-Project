@@ -5,6 +5,7 @@ const port: number = Number(process.env.PORT) || 8080;
 import connectMongoDB from "./config/connectMongoDB";
 import STATUSTEXT from "./constants/httpStatusText";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 // ROUTES
 import authRouter from "./routes/auth.routes";
 import usersRouter from "./routes/users.routes";
@@ -17,6 +18,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_BASE_URL,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 // ROUTES MIDDLEWARE
 app.use("/api/auth", authRouter);

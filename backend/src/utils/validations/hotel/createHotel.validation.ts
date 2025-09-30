@@ -5,7 +5,7 @@ export const createHotelSchema = z.object({
     .string()
     .min(1, "Hotel name is required")
     .max(100, "Hotel name must be less than 100 characters"),
-  description: z
+  desc: z
     .string()
     .min(10, "Description must be at least 10 characters")
     .max(1000, "Description must be less than 1000 characters"),
@@ -15,7 +15,7 @@ export const createHotelSchema = z.object({
   distance: z.string().min(1, "Distance is required"),
   photos: z.array(z.string()).optional(),
   rating: z.number().min(0).max(5).optional(),
-  rooms: z.array(z.string()).optional(), // ممكن تضيف validation إنهم ObjectId
+  rooms: z.array(z.string()).optional(),
   cheapestPrice: z.number().positive("Cheapest price must be greater than 0"),
   featured: z.boolean().optional(),
 });
