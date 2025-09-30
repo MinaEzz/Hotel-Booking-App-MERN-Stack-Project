@@ -13,9 +13,10 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { adminMiddleware } from "../middlewares/admin.middleware";
 const router = express.Router();
 
-// CREATE
+// CREATE / READ ALL
 router
   .route("/")
+  .get(getHotels)
   .post(
     authMiddleware,
     adminMiddleware,
@@ -24,7 +25,6 @@ router
   );
 
 // READ / UPDATE / DELETE
-router.route("/").get(getHotels);
 router
   .route("/:hotelId")
   .get(getHotelById)

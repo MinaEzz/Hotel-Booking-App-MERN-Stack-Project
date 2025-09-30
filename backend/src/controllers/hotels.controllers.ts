@@ -1,12 +1,13 @@
 import Hotel from "../models/hotel.model";
 import STATUSTEXT from "../constants/httpStatusText";
 import { Request, Response, NextFunction } from "express";
-import IHotel from "../types/hotel.types";
 import createError from "../utils/createError";
+import { CreateHotelInput } from "../utils/validations/hotel/createHotel.validation";
+import { UpdateHotelInput } from "../utils/validations/hotel/updateHotel.validation";
 
 // CREATE
 export const createHotel = async (
-  req: Request<{}, {}, IHotel>,
+  req: Request<{}, {}, CreateHotelInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -34,7 +35,7 @@ export const createHotel = async (
 
 // UPDATE
 export const updateHotel = async (
-  req: Request<{ hotelId: string }, {}, IHotel>,
+  req: Request<{ hotelId: string }, {}, UpdateHotelInput>,
   res: Response,
   next: NextFunction
 ) => {

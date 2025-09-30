@@ -1,14 +1,18 @@
 import User from "../models/user.model";
 import STATUSTEXT from "../constants/httpStatusText";
 import { Request, Response, NextFunction } from "express";
-import IUser from "../types/user.types";
 import createError from "../utils/createError";
 import generateOTP from "../utils/generateOtp";
 import generateTokenAndSetCookies from "../utils/validations/generateToken";
 import IAuthRequest from "../types/authRequest.types";
+import { RegisterInput } from "../utils/validations/auth/register.validation";
+import {
+  LoginInput,
+  VerifyOtpInput,
+} from "../utils/validations/auth/login.validation";
 
 export const register = async (
-  req: Request<{}, {}, IUser>,
+  req: Request<{}, {}, RegisterInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -50,7 +54,7 @@ export const register = async (
 };
 
 export const loginSendOtp = async (
-  req: Request<{}, {}, { identifier: string; password: string }>,
+  req: Request<{}, {}, LoginInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -87,7 +91,7 @@ export const loginSendOtp = async (
 };
 
 export const verifyOtpAndLogin = async (
-  req: Request<{}, {}, { identifier: string; otp: string }>,
+  req: Request<{}, {}, VerifyOtpInput>,
   res: Response,
   next: NextFunction
 ) => {

@@ -1,13 +1,14 @@
 import User from "../models/user.model";
 import STATUSTEXT from "../constants/httpStatusText";
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import IUser from "../types/user.types";
 import createError from "../utils/createError";
 import IAuthRequest from "../types/authRequest.types";
+import { UpdateUserInput } from "../utils/validations/user/updateUser.validation";
 
 // CREATE
 export const createUser = async (
-  req: IAuthRequest<{}, {}, IUser>,
+  req: Request<{}, {}, IUser>,
   res: Response,
   next: NextFunction
 ) => {
@@ -49,7 +50,7 @@ export const createUser = async (
 
 // UPDATE
 export const updateUser = async (
-  req: IAuthRequest<{ userId: string }, {}, IUser>,
+  req: IAuthRequest<{ userId: string }, {}, UpdateUserInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -132,7 +133,7 @@ export const deleteUser = async (
 
 // READ ALL
 export const getAllUsers = async (
-  _req: IAuthRequest,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IRoom } from "../types/room.types";
+import IRoom from "../types/room.types";
 
 const roomShcema = new mongoose.Schema<IRoom>({
   title: {
