@@ -24,11 +24,10 @@ export const createRoom = async (
     }
     const room = new Room({ ...body, hotel: hotel._id });
     await room.save({ session });
-    hotel.rooms.push(room._id);
+    await hotel.updateOne({ $push: { rooms: room._id } }, { session });
     await hotel.save({ session });
     await session.commitTransaction();
     session.endSession();
-
     res.status(201).json({
       status: STATUSTEXT.SUCCESS,
       data: {
@@ -85,12 +84,23 @@ export const deleteRoom = async (
   next: NextFunction
 ) => {
   const { roomId } = req.params;
+  const session = await mongoose.startSession();
 
   try {
-    const room = await Room.findByIdAndDelete(roomId);
+    session.startTransaction();
+    const room = await Room.findById(roomId).session(session);
     if (!room) {
       return next(createError("Room Not Found", 404, STATUSTEXT.FAIL));
     }
+    const hotel = await Hotel.findById(room.hotel).session(session);
+    if (!hotel) {
+      return next(createError("Hotel Not Found", 404, STATUSTEXT.FAIL));
+    }
+    await room.deleteOne({ session });
+    await hotel.updateOne({ $pull: { rooms: room._id } }, { session });
+    await hotel.save({ session });
+    await session.commitTransaction();
+    session.endSession();
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: room,
