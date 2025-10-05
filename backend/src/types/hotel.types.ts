@@ -4,7 +4,10 @@ export default interface IHotel extends Document {
   hotelName: string;
   desc: string;
   type: string;
-  city: string;
+  country: {
+    name: string;
+    code: string;
+  };
   address: string;
   distance: string;
   photos: string[];

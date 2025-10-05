@@ -25,9 +25,7 @@ export const createRoom = async (
     const room = new Room({ ...body, hotel: hotel._id });
     await room.save({ session });
     await hotel.updateOne({ $push: { rooms: room._id } }, { session });
-    await hotel.save({ session });
     await session.commitTransaction();
-    session.endSession();
     res.status(201).json({
       status: STATUSTEXT.SUCCESS,
       data: {
@@ -43,6 +41,8 @@ export const createRoom = async (
       return next(createError(error.message, 500));
     }
     return next(createError("Unexpected error", 500));
+  } finally {
+    session.endSession();
   }
 };
 
@@ -98,9 +98,7 @@ export const deleteRoom = async (
     }
     await room.deleteOne({ session });
     await hotel.updateOne({ $pull: { rooms: room._id } }, { session });
-    await hotel.save({ session });
     await session.commitTransaction();
-    session.endSession();
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: room,
@@ -112,6 +110,8 @@ export const deleteRoom = async (
       return next(createError(error.message, 500));
     }
     return next(createError("Unexpected error", 500));
+  } finally {
+    session.endSession();
   }
 };
 
@@ -126,7 +126,7 @@ export const getRooms = async (
     if (rooms.length === 0) {
       return res.status(204).json({
         status: STATUSTEXT.SUCCESS,
-        data: { hotels: [] },
+        data: { rooms: [] },
         message: "No Rooms In The Database",
       });
     }

@@ -1,17 +1,18 @@
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 dotenv.config();
 const port: number = Number(process.env.PORT) || 8080;
 import connectMongoDB from "./config/connectMongoDB";
 import STATUSTEXT from "./constants/httpStatusText";
-import cookieParser from "cookie-parser";
-import cors from "cors";
+import type IAppError from "./types/appError.types";
 // ROUTES
 import authRouter from "./routes/auth.routes";
 import usersRouter from "./routes/users.routes";
 import hotelsRouter from "./routes/hotels.routes";
 import roomsRouter from "./routes/rooms.routes";
-import IAppError from "./types/appError.types";
+import countriesRouter from "./routes/countries.routes";
 import createError from "./utils/createError";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/rooms", roomsRouter);
+app.use("/api/countries", countriesRouter);
 // GLOBAL MIDDLEWARE FOR NOT FOUND ROUTERS
 app.all(/.*/, (_req: Request, _res: Response, next: NextFunction) => {
   return next(
