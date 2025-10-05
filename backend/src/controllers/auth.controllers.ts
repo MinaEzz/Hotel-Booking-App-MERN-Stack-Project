@@ -3,7 +3,7 @@ import STATUSTEXT from "../constants/httpStatusText";
 import { Request, Response, NextFunction } from "express";
 import createError from "../utils/createError";
 import generateOTP from "../utils/generateOtp";
-import generateTokenAndSetCookies from "../utils/validations/generateToken";
+import generateTokenAndSetCookies from "../utils/generateToken";
 import IAuthRequest from "../types/authRequest.types";
 import { RegisterInput } from "../utils/validations/auth/register.validation";
 import {
