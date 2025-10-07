@@ -146,6 +146,7 @@ export const getAllUsers = async (
         status: STATUSTEXT.SUCCESS,
         data: { users: [] },
         message: "No Users In The Database",
+        results: users.length,
       });
     }
     res.status(200).json({
@@ -154,6 +155,7 @@ export const getAllUsers = async (
         users,
       },
       message: "Users Fetched Successfully",
+      results: users.length,
     });
   } catch (error: unknown) {
     console.log("GET ALL USERS ERROR: ", error);

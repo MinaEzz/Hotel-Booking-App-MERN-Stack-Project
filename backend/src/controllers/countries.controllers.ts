@@ -14,10 +14,14 @@ export const getCountries = async (
     );
     const data = (await response.json()) as ICountry[];
 
-    const formatted = data.map((country) => ({
-      name: country.name.common,
-      code: country.cca2,
-    }));
+    const formatted = data
+      .map((country) => ({
+        name: country.name.common,
+        code: country.cca2,
+      }))
+      .sort((a, b) =>
+        a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+      );
 
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
@@ -25,6 +29,7 @@ export const getCountries = async (
         countries: formatted,
       },
       message: "Countries Fetched Successfully",
+      results: formatted.length,
     });
   } catch (error: unknown) {
     console.log("GET COUNTRIES ERROR: ", error);

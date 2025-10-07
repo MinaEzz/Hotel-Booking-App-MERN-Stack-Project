@@ -78,6 +78,7 @@ export const updateRoom = async (
   }
 };
 
+// DELETE
 export const deleteRoom = async (
   req: Request<{ roomId: string }>,
   res: Response,
@@ -128,6 +129,7 @@ export const getRooms = async (
         status: STATUSTEXT.SUCCESS,
         data: { rooms: [] },
         message: "No Rooms In The Database",
+        results: rooms.length,
       });
     }
     res.status(200).json({
@@ -136,6 +138,7 @@ export const getRooms = async (
         rooms,
       },
       message: "Rooms Fetched Successfully",
+      results: rooms.length,
     });
   } catch (error: unknown) {
     console.log("GET ROOMS ERROR: ", error);

@@ -110,6 +110,7 @@ export const getHotels = async (
         status: STATUSTEXT.SUCCESS,
         data: { hotels: [] },
         message: "No Hotels In The Database",
+        results: hotels.length,
       });
     }
     res.status(200).json({
@@ -118,6 +119,7 @@ export const getHotels = async (
         hotels,
       },
       message: "Hotels Fetched Successfully",
+      results: hotels.length,
     });
   } catch (error: unknown) {
     console.log("GET HOTELS ERROR: ", error);
