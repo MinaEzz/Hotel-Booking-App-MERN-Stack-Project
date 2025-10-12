@@ -28,7 +28,7 @@ router
 router
   .route("/:hotelId")
   .get(getHotelById)
-  .put(
+  .patch(
     authMiddleware,
     adminMiddleware,
     validate(updateHotelSchema),

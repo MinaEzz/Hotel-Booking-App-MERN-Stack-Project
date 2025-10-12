@@ -1,10 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-dotenv.config();
-const port: number = Number(process.env.PORT) || 8080;
-import connectMongoDB from "./config/connectMongoDB";
 import STATUSTEXT from "./constants/httpStatusText";
 import type IAppError from "./types/appError.types";
 // ROUTES
@@ -33,12 +29,14 @@ app.use("/api/users", usersRouter);
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/rooms", roomsRouter);
 app.use("/api/countries", countriesRouter);
+
 // GLOBAL MIDDLEWARE FOR NOT FOUND ROUTERS
 app.all(/.*/, (_req: Request, _res: Response, next: NextFunction) => {
   return next(
     createError("This Resource Is Not Available", 404, STATUSTEXT.ERROR)
   );
 });
+
 // DEFAULT ERROR HANDLER
 app.use(
   (error: IAppError, _req: Request, res: Response, next: NextFunction) => {
@@ -54,8 +52,4 @@ app.use(
   }
 );
 
-app.listen(port, () => {
-  console.log("> Server is up and running on port : " + port);
-  console.log("NODE_ENV =>", process.env.NODE_ENV);
-  connectMongoDB();
-});
+export default app;

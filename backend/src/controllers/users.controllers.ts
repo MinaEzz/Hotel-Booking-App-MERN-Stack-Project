@@ -55,20 +55,22 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   const { userId } = req.params;
-  const { username, email, password } = req.body;
+  const body = req.body;
 
   try {
     if (!req.user || req.user._id.toString() !== userId) {
       return next(createError("Unauthorized.", 401, STATUSTEXT.FAIL));
     }
-    const user = await User.findById(userId);
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: body,
+      },
+      { new: true }
+    );
     if (!user) {
       return next(createError("User Not Found", 404, STATUSTEXT.FAIL));
     }
-    if (username) user.username = username;
-    if (email) user.email = email;
-    if (password) user.password = password;
-    await user.save();
     const { password: _pw, otp: _o, ...userData } = user.toObject();
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,

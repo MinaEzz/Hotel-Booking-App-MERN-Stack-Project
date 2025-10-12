@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import createError from "../utils/createError";
 import { CreateHotelInput } from "../utils/validations/hotel/createHotel.validation";
 import { UpdateHotelInput } from "../utils/validations/hotel/updateHotel.validation";
+import fi from "zod/v4/locales/fi.js";
 
 // CREATE
 export const createHotel = async (
@@ -40,9 +41,7 @@ export const updateHotel = async (
   next: NextFunction
 ) => {
   const { hotelId } = req.params;
-  console.log("UPDATE HOTEL ID: ", hotelId);
   const body = req.body;
-  console.log("UPDATE HOTEL BODY: ", body);
 
   try {
     const hotel = await Hotel.findByIdAndUpdate(
@@ -99,12 +98,17 @@ export const deleteHotel = async (
 
 // READ ALL
 export const getHotels = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  const { featured, limit } = req.query;
+  const filter: { featured?: boolean; limit?: number } = {};
+  if (featured) filter.featured = featured === "true";
+  // const hotelsLimit = limit ? Number(limit) : undefined;
   try {
-    const hotels = await Hotel.find().sort({ createdAt: -1 });
+    const hotels = await Hotel.find(filter).sort({ createdAt: -1 });
+    // .limit(hotelsLimit);
     if (hotels.length === 0) {
       return res.status(204).json({
         status: STATUSTEXT.SUCCESS,
