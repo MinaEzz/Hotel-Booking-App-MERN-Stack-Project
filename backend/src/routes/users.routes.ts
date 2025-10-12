@@ -23,7 +23,7 @@ router.route("/").get(authMiddleware, adminMiddleware, getAllUsers);
 router
   .route("/:userId")
   .get(authMiddleware, getUserById)
-  .put(authMiddleware, validate(updateUserSchema), updateUser)
+  .patch(authMiddleware, validate(updateUserSchema), updateUser)
   .delete(authMiddleware, deleteUser);
 
 export default router;

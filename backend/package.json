@@ -1,13 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "dist/app.js",
+  "main": "dist/server.js",
   "scripts": {
     "build": "rimraf dist && npx tsc",
     "predev": "npm run build",
-    "dev": "concurrently \"npx tsc -w\" \"nodemon dist/app.js\"",
+    "dev": "concurrently \"npx tsc -w\" \"nodemon dist/server.js\"",
     "prestart": "npm run build",
-    "start": "node dist/app.js"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",

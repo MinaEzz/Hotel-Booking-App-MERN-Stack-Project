@@ -55,10 +55,14 @@ export const updateRoom = async (
   const { roomId } = req.params;
   const body = req.body;
   try {
-    const room = await Room.findByIdAndUpdate(roomId, body, {
-      new: true,
-      runValidators: true,
-    });
+    const room = await Room.findByIdAndUpdate(
+      roomId,
+      { $set: body },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!room) {
       return next(createError("Room Not Found", 404, STATUSTEXT.FAIL));
     }

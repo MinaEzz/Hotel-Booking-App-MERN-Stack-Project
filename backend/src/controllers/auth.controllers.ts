@@ -10,6 +10,8 @@ import {
   LoginInput,
   VerifyOtpInput,
 } from "../utils/validations/auth/login.validation";
+import { ForgotPasswordInput } from "../utils/validations/password/forgotPassword.validation";
+import { ResetPasswordInput } from "../utils/validations/password/resetPassword.validation";
 
 export const register = async (
   req: Request<{}, {}, RegisterInput>,
@@ -27,7 +29,7 @@ export const register = async (
     }
     const user = new User({
       username,
-      email,
+      email: email.toLowerCase(),
       password,
     });
     await user.save();
@@ -62,7 +64,7 @@ export const loginSendOtp = async (
 
   try {
     const user = await User.findOne({
-      $or: [{ username: identifier }, { email: identifier }],
+      $or: [{ username: identifier }, { email: identifier.toLowerCase() }],
     });
     if (!user) {
       return next(createError("User Not Found", 404, STATUSTEXT.FAIL));
@@ -184,6 +186,119 @@ export const getLoggedinUser = async (
     });
   } catch (error: unknown) {
     console.log("GET LOGGEDIN USER ERROR: ", error);
+    if (error instanceof Error) {
+      return next(createError(error.message, 500));
+    }
+    return next(createError("Unexpected error", 500));
+  }
+};
+
+export const forgotPassword = async (
+  req: Request<{}, {}, ForgotPasswordInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return next(createError("Email Not Found", 404, STATUSTEXT.FAIL));
+    }
+    const otp = generateOTP();
+    console.log("FORGOT PASSWORD OTP: ", otp);
+    await user.setOtp(otp, Number(process.env.OTP_EXPIRE_MINUTES || 5));
+    // await sendOtpEmail(user.email, otp);
+    const { password: _pw, otp: _o, ...userData } = user.toObject();
+    res.status(200).json({
+      status: STATUSTEXT.SUCCESS,
+      data: userData,
+      message:
+        "OTP sent to registered email. Please verify to complete password reset.",
+    });
+  } catch (error: unknown) {
+    console.log("FORGOT PASSWORD ERROR: ", error);
+    if (error instanceof Error) {
+      return next(createError(error.message, 500));
+    }
+    return next(createError("Unexpected error", 500));
+  }
+};
+
+export const verifyOtp = async (
+  req: Request<{}, {}, VerifyOtpInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { identifier, otp } = req.body;
+  try {
+    const user = await User.findOne({ email: identifier.toLowerCase() });
+    if (!user)
+      return next(createError("Invalid OTP or user", 400, STATUSTEXT.FAIL));
+    if (!user.otp || !user.otp.codeHash) {
+      return next(
+        createError("OTP not requested or expired", 400, STATUSTEXT.FAIL)
+      );
+    }
+    const isMatch = await user.verifyOtp(otp);
+    console.log("OTP isMatch: ", isMatch);
+    if (!isMatch) {
+      // increment attempts (and optionally lock after N attempts)
+      await user.incrementOtpAttempts(1);
+      if (user.otp.attempts > 5) {
+        user.otp.codeHash = null;
+        user.otp.expiresAt = null;
+        await user.save();
+        return next(
+          createError(
+            "Too many invalid attempts. Please login again",
+            401,
+            STATUSTEXT.FAIL
+          )
+        );
+      }
+      return next(createError("Invalid OTP", 400, STATUSTEXT.FAIL));
+    }
+    user.otp = { codeHash: null, expiresAt: null, attempts: 0 };
+    await user.save();
+    const { password: _pw, otp: _o, ...userData } = user.toObject();
+    res.status(200).json({
+      status: STATUSTEXT.SUCCESS,
+      data: { user: userData },
+      message: "OTP verified successfully.",
+    });
+  } catch (error: unknown) {
+    console.log("VERIFY OTP ERROR: ", error);
+    if (error instanceof Error) {
+      return next(createError(error.message, 500));
+    }
+    return next(createError("Unexpected error", 500));
+  }
+};
+
+// take id - new password and confirm password  from body - find and update by id
+export const resetPassword = async (
+  req: Request<{}, {}, ResetPasswordInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId, password } = req.body;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createError("User Not Found", 404, STATUSTEXT.FAIL));
+    }
+    user.password = password;
+    await user.save();
+    const { password: _pw, otp: _o, ...userData } = user.toObject();
+    res.status(200).json({
+      status: STATUSTEXT.SUCCESS,
+      data: {
+        user: userData,
+      },
+      message: "Password Updated Successfully",
+    });
+  } catch (error: unknown) {
+    console.log("UPDATE PASSWORD ERROR: ", error);
     if (error instanceof Error) {
       return next(createError(error.message, 500));
     }
