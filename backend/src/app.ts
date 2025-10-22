@@ -9,6 +9,7 @@ import usersRouter from "./routes/users.routes";
 import hotelsRouter from "./routes/hotels.routes";
 import roomsRouter from "./routes/rooms.routes";
 import countriesRouter from "./routes/countries.routes";
+import searchRouter from "./routes/search.routes";
 import createError from "./utils/createError";
 
 const app = express();
@@ -29,6 +30,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/hotels", hotelsRouter);
 app.use("/api/rooms", roomsRouter);
 app.use("/api/countries", countriesRouter);
+app.use("/api/search", searchRouter);
 
 // GLOBAL MIDDLEWARE FOR NOT FOUND ROUTERS
 app.all(/.*/, (_req: Request, _res: Response, next: NextFunction) => {
