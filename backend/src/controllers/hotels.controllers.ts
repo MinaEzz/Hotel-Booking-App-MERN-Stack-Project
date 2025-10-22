@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from "express";
 import createError from "../utils/createError";
 import { CreateHotelInput } from "../utils/validations/hotel/createHotel.validation";
 import { UpdateHotelInput } from "../utils/validations/hotel/updateHotel.validation";
-import fi from "zod/v4/locales/fi.js";
 
 // CREATE
 export const createHotel = async (
@@ -98,29 +97,36 @@ export const deleteHotel = async (
 
 // READ ALL
 export const getHotels = async (
-  req: Request,
+  req: Request<{}, {}, {}, { page?: string; limit?: string }>,
   res: Response,
   next: NextFunction
 ) => {
-  const { featured, limit } = req.query;
-  const filter: { featured?: boolean; limit?: number } = {};
-  if (featured) filter.featured = featured === "true";
-  // const hotelsLimit = limit ? Number(limit) : undefined;
+  const page = parseInt(req.query.page || "1");
+  const limit = parseInt(req.query.limit || "10");
+  const skip = (page - 1) * limit;
   try {
-    const hotels = await Hotel.find(filter).sort({ createdAt: -1 });
-    // .limit(hotelsLimit);
+    const [hotels, total] = await Promise.all([
+      Hotel.find().sort({ createdAt: -1 }).limit(limit).skip(skip),
+      Hotel.countDocuments(),
+    ]);
     if (hotels.length === 0) {
       return res.status(204).json({
         status: STATUSTEXT.SUCCESS,
         data: { hotels: [] },
         message: "No Hotels In The Database",
-        results: hotels.length,
+        results: 0,
       });
     }
     res.status(200).json({
       status: STATUSTEXT.SUCCESS,
       data: {
         hotels,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(total / limit),
+          total,
+          limit,
+        },
       },
       message: "Hotels Fetched Successfully",
       results: hotels.length,
