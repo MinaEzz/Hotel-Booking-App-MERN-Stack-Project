@@ -5,8 +5,11 @@ import "react-date-range/dist/theme/default.css";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import useScreenSize from "@/hooks/useScreenSize.hook";
 import { useDateRangePicker } from "./useDateRangePicker.hook";
+import IDateRangePickerProps from "./DateRangePicker.types";
 
-export default function DateRangePicker() {
+export default function DateRangePicker({
+  onDateChange,
+}: IDateRangePickerProps) {
   const screenSize = useScreenSize();
   const modalId = "date-range-modal";
   const {
@@ -14,9 +17,8 @@ export default function DateRangePicker() {
     closeModal,
     tempRange,
     setTempRange,
-    range,
+    setRange,
     formattedRange,
-    handleSave,
   } = useDateRangePicker(modalId);
 
   return (
@@ -56,7 +58,6 @@ export default function DateRangePicker() {
               className="btn btn-ghost"
               onClick={(e) => {
                 e.preventDefault();
-                setTempRange(range);
                 closeModal();
               }}
             >
@@ -66,7 +67,11 @@ export default function DateRangePicker() {
               className="btn btn-primary"
               onClick={(e) => {
                 e.preventDefault();
-                handleSave();
+                if (tempRange[0].startDate && tempRange[0].endDate) {
+                  setRange(tempRange);
+                  onDateChange(tempRange[0].startDate, tempRange[0].endDate);
+                }
+                closeModal();
               }}
             >
               Save

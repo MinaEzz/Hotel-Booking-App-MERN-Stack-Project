@@ -2,7 +2,7 @@ import SearchForm from "./search-form/SearchForm.component";
 
 export default function HeroContent() {
   return (
-    <div className="w-full flex flex-col items-center justify-center sm:py-12 py-20 gap-12">
+    <div className="w-full flex flex-col items-center justify-center py-20 gap-12">
       <div className="w-full flex flex-col gap-4 items-center text-center text-white">
         <h1 className="text-8xl font-heading font-medium capitalize">
           Find Your Perfect Stay
