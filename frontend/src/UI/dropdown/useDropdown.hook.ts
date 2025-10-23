@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export function useCountryDropdown() {
+export function useDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState("");
   const openDropdown = () => setIsOpen(true);
