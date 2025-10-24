@@ -49,9 +49,15 @@ export default function CountryDropdown({
       </div>
 
       {/* Dropdown menu */}
-      {isOpen && !isLoading && (
+      {isOpen && (
         <ul className="absolute left-0 mt-1 w-full max-h-48 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg z-20 p-2">
-          {!countries || countries.length === 0 ? (
+          {isLoading ? (
+            <li>
+              <p className="text-base text-gray-500 capitalize">
+                Loading countries...
+              </p>
+            </li>
+          ) : !countries || countries.length === 0 ? (
             <li>
               <p className="text-base text-gray-500 capitalize">
                 No countries available.
