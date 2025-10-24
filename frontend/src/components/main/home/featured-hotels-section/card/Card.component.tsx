@@ -1,7 +1,7 @@
 import { IHotel } from "@/types/hotel.types";
 import { MapPinIcon, StarIcon } from "@heroicons/react/24/outline";
 
-export default function HotelCard({ hotel }: { hotel: IHotel }) {
+export default function Card({ hotel }: { hotel: IHotel }) {
   return (
     <div className="card bg-base-100 shadow-sm" key={hotel._id}>
       <figure>

@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <nav className="navbar bg-base-100 shadow-sm fixed justify-between z-40">
-      <Link href={"/"} className="btn btn-link text-2xl font-heading">
+    <nav className="navbar bg-base-100 shadow-sm fixed justify-between z-40 px-12">
+      <Link href={"/"} className="btn btn-link text-3xl font-heading">
         StayBook
       </Link>
 
