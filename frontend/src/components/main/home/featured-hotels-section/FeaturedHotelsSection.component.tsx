@@ -4,11 +4,13 @@ import Card from "./card/Card.component";
 
 export default async function FeaturedHotelsSection() {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/hotels?featured=true`
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/hotels/featured`,
+    {
+      next: { revalidate: 60 * 60 },
+    }
   );
   const data: IHotelsResponse = await response.json();
-  if (data.data.hotels.length === 0) return null;
-  console.log(data);
+  if (!data.data.hotels || data.data.hotels.length === 0) return null;
 
   return (
     <section className="w-full py-12 flex flex-col gap-8">
