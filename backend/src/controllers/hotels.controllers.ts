@@ -167,3 +167,35 @@ export const getHotelById = async (
     return next(createError("Unexpected error", 500));
   }
 };
+
+// READ FETURED HOTELS
+export const getFeaturedHotels = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const hotels = await Hotel.find({ featured: true })
+      .sort({ createdAt: -1 })
+      .limit(3);
+    if (hotels.length === 0) {
+      return res.status(204).json({
+        status: STATUSTEXT.SUCCESS,
+        data: { hotels: [] },
+        message: "No Featured Hotels In The Database",
+        results: 0,
+      });
+    }
+    res.status(200).json({
+      status: STATUSTEXT.SUCCESS,
+      data: { hotels },
+      message: "Featured Hotels Fetched Successfully",
+      results: hotels.length,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return next(createError(error.message, 500));
+    }
+    return next(createError("Unexpected error", 500));
+  }
+};

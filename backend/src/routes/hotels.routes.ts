@@ -2,6 +2,7 @@ import express from "express";
 import {
   createHotel,
   deleteHotel,
+  getFeaturedHotels,
   getHotelById,
   getHotels,
   updateHotel,
@@ -23,6 +24,9 @@ router
     validate(createHotelSchema),
     createHotel
   );
+
+// READ FEATURED HOTELS
+router.route("/featured").get(getFeaturedHotels);
 
 // READ / UPDATE / DELETE
 router
