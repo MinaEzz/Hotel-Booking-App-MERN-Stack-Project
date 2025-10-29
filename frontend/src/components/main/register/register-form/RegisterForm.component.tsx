@@ -5,7 +5,7 @@ import { useRegister } from "./useRegister.hook";
 export default function RegisterForm() {
   const { formValues, state, handleSubmit, handleChange, isPending } =
     useRegister();
-  console.log("State: ", state);
+  console.log("Register State: ", state);
 
   return (
     <form
