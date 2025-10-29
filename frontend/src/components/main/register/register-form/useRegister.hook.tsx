@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useTransition, useActionState } from "react";
 import { useRouter } from "next/navigation";
-// import { useFormState } from "react-dom";
 import { IRegisterFormValues, IRegisterState } from "./register.types";
 import { register } from "./register.action";
+import toast from "react-hot-toast";
 
 export function useRegister() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export function useRegister() {
     password: "",
     confirmPassword: "",
   });
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
   }
@@ -28,6 +29,7 @@ export function useRegister() {
   );
 
   const [isPending, startTransition] = useTransition();
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -37,6 +39,7 @@ export function useRegister() {
   }
 
   useEffect(() => {
+    if (!state.message) return;
     if (state.success) {
       setFormValues({
         username: "",
@@ -45,8 +48,11 @@ export function useRegister() {
         confirmPassword: "",
       });
       router.push("/login");
+      toast.success(state.message || "Registration successful!");
+    } else {
+      toast.error(state.message || "Registration failed!");
     }
-  }, [state.success]);
+  }, [state, router]);
 
   return { formValues, handleChange, state, handleSubmit, isPending };
 }
