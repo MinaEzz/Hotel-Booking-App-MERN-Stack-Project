@@ -1,4 +1,4 @@
-export default interface ICountry {
+export interface IRestCountry {
   name: {
     common: string;
     official: string;
@@ -10,4 +10,9 @@ export default interface ICountry {
     };
   };
   cca2: string;
+}
+
+export interface ICountry {
+  name: string;
+  code: string;
 }

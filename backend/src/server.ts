@@ -1,7 +1,7 @@
 import app from "./app";
 import dotenv from "dotenv";
-import connectMongoDB from "./config/connectMongoDB";
 dotenv.config();
+import connectMongoDB from "./config/connectMongoDB";
 
 const port: number = Number(process.env.PORT) || 8080;
 
