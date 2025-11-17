@@ -33,7 +33,7 @@ export const register = async (
       password,
     });
     await user.save();
-    const { password: _pw, ...userData } = user.toObject();
+    const { password: _pw, otp: _o, ...userData } = user.toObject();
     res.status(201).json({
       status: STATUSTEXT.SUCCESS,
       data: {
@@ -99,7 +99,7 @@ export const verifyOtpAndLogin = async (
 ) => {
   const { identifier, otp } = req.body;
   try {
-    const user = await User.findById(identifier);
+    const user = await User.findOne({ email: identifier.toLowerCase() });
     console.log("USER: ", user);
     if (!user)
       return next(createError("Invalid OTP or user", 400, STATUSTEXT.FAIL));

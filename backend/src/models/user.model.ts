@@ -6,20 +6,20 @@ const userSchema = new mongoose.Schema<IUser>(
   {
     username: {
       type: String,
-      required: true,
+      required: [true, "username is required"],
       unique: true,
       trim: true,
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "email is required"],
       unique: true,
       trim: true,
       lowercase: true,
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "password is required"],
       minlength: 6,
     },
     isAdmin: {

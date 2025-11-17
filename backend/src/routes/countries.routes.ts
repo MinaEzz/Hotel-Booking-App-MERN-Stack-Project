@@ -1,9 +1,10 @@
 import express from "express";
-import { getCountries } from "../controllers/countries.controllers";
+import {
+  getCountries,
+  setCountries,
+} from "../controllers/countries.controllers";
 const router = express.Router();
 
+router.route("/").get(getCountries).post(setCountries);
 
-router.route("/").get(getCountries);
-
-
-export default router
+export default router;
